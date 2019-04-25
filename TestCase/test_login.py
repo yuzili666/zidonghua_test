@@ -112,5 +112,34 @@ class Test_login:
         # .assert_in_text 用来断言字符 第一个参数填 比较多的那个字符; 第二参数填 这个字符 是否存在第一个字符里面
         assertion.assert_in_text(resp_dict['message'], msg)
 
+    @allure.story("获取商品分类")
+    def test_get_sku(self):
+        param = {'pageNum': '1', 'pageSize': '5'}
+        sku_get_resp = request.get_request(url=url + 'productCategory/list/0', headers=head)
+        resp_json = sku_get_resp.json()
+        assertion.assert_code(sku_get_resp.status_code,200)
+        assertion.assert_in_text(resp_json['message'],'成功')
+
+    # @allure.story("删除商品分类")
+
+    @allure.story("添加商品分类")
+    def test_creat_sku(self):
+        req_json = {'description': "", 'icon': "", 'keywords': "", 'name': "我去你吗", 'navStatus': 0, 'parentId': 0, 'productUnit': '','showStatus': 0,'sort': 0}
+        sku_creat_resp = request.post_request(url=url + 'productCategory/create',json = req_json, headers=head)
+        creat_resp = sku_creat_resp.json()
+        assertion.assert_code(sku_creat_resp.status_code, 200)
+        assertion.assert_in_text(creat_resp['message'], '成功')
+
+
+    @allure.story("添加商品分类（参数化）")
+    @pytest.mark.parametrize("name",['test1','test2','test3'],ids=['第一个','第二个','第三个'])
+    def test_creat_sku(self,name):
+        req_json = {'description': "", 'icon': "", 'keywords': "", 'name': name, 'navStatus': 0, 'parentId': 0,
+                    'productUnit': '', 'showStatus': 0, 'sort': 0}
+        sku_creat_resp = request.post_request(url=url + 'productCategory/create', json=req_json, headers=head)
+        creat_resp = sku_creat_resp.json()
+        assertion.assert_code(sku_creat_resp.status_code, 200)
+        assertion.assert_in_text(creat_resp['message'], '成功')
+
 
 
